@@ -19,9 +19,26 @@ namespace EcommerceAPI.Controllers
 
         [HttpGet]
 
-        public IEnumerable<Product> GetProducts()
+        public ActionResult GetProducts()
         {
-            return _context.Products;
+            
+            var products = _context.Products.Select(product => new
+            {
+                id = product.Id,
+                productPrice = product.ProductPrice,
+                productName = product.ProductName,
+                productDescription = product.ProductDescription,
+
+                Categories = product.Categories.Select(category => new
+                {
+                    id = category.Id,
+                    name = category.Name,
+                    type = category.Type,
+                })
+            });
+
+            return StatusCode(StatusCodes.Status200OK, products);
+           
         }
 
         [HttpPost]
@@ -48,7 +65,7 @@ namespace EcommerceAPI.Controllers
         {
             try
             {
-                var product = _context.Products.Where(x => x.Id == Id).Include(x => x.CustomerId);
+                var product = _context.Products.Where(x => x.Id == Id);
                 return StatusCode(StatusCodes.Status200OK, product);
             }
             catch (Exception Ex)

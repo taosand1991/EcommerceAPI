@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel;
 
 namespace EcommerceAPI.Models
 {
@@ -13,6 +14,16 @@ namespace EcommerceAPI.Models
 
         public required string Email { get; set; }
 
+        [PasswordPropertyText]
+        public required string Password { get; set; }
+
         public List<Product> Products { get; } = new List<Product>();
+    }
+
+    public class LoginData
+    {
+        public required string Email { get; set; }
+
+        public required string Password { get; set; }
     }
 }

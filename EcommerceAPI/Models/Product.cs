@@ -11,5 +11,7 @@
         public required int ProductPrice { get; set; }
 
         public int CustomerId {  get; set; }
+
+        public List<Category> Categories { get; set; } = new List<Category>();
     }
 }
