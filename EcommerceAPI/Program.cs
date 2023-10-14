@@ -6,10 +6,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
-builder.Services.AddDbContext<EcommerceContext>
-    (
-    options => { options.UseSqlServer(builder.Configuration.GetConnectionString("MyConnection"));
-    });
+//builder.Services.AddDbContext<EcommerceContext>
+//    (
+//    options => { options.UseSqlServer(builder.Configuration.GetConnectionString("MyConnection"));
+//        options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+//    });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

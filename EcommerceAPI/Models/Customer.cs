@@ -14,6 +14,8 @@ namespace EcommerceAPI.Models
 
         public required string Email { get; set; }
 
+        public required Boolean Admin { get; set; } = false;
+
         [PasswordPropertyText]
         public required string Password { get; set; }
 

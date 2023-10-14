@@ -10,18 +10,15 @@ namespace EcommerceAPI.Controllers
     [ApiController]
     public class CategoryController : ControllerBase
     {
-        private readonly EcommerceContext _context;
-
-        public CategoryController(EcommerceContext context)
-        {
-            _context = context;
-        }
-
+       
         [HttpPost]
         public IActionResult CreateCategory(Category category)
         {
+            using var _context = new EcommerceContext();
+
             try
             {
+                
                 _context.Categories.Add(category);
                 _context.SaveChanges();
                 return StatusCode(StatusCodes.Status201Created, category);
@@ -37,6 +34,8 @@ namespace EcommerceAPI.Controllers
 
         public IActionResult GetCategories()
         {
+            using var _context = new EcommerceContext();
+
             var categories = _context.Categories.Select(category => new 
             {
                 id = category.Id,
@@ -50,7 +49,7 @@ namespace EcommerceAPI.Controllers
                     product.ProductDescription,
                     product.ProductPrice,
                 })
-            });
+            }).ToList();
             return StatusCode(StatusCodes.Status200OK, categories);
         }
     }

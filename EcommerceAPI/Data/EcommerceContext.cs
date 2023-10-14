@@ -12,7 +12,9 @@ namespace EcommerceAPI.Data
 
         public DbSet<Category> Categories { get; set; }
 
-        public EcommerceContext(DbContextOptions<EcommerceContext> options) : base(options) { }
+        //public EcommerceContext(DbContextOptions<EcommerceContext> options) : base(options) { }
+
+        //public EcommerceContext() { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -37,6 +39,11 @@ namespace EcommerceAPI.Data
                 .HasMany(e => e.Products)
                 .WithMany(e => e.Categories)
                 .UsingEntity("CategoryProduct");
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB; Initial Catalog=EcommerceApi");
         }
     }
 

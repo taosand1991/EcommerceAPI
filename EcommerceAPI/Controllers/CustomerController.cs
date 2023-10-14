@@ -10,17 +10,13 @@ namespace EcommerceAPI.Controllers
     [ApiController]
     public class CustomerController : ControllerBase
     {
-        private readonly EcommerceContext _context;
-
-        public CustomerController(EcommerceContext context)
-        {
-            _context = context;
-        }
-
+        
         [HttpGet]
 
         public IActionResult GetCustomers()
         {
+            using var _context = new EcommerceContext();
+
             var customers = _context.Customers.Select(customer => new
             {
                 customer.Id,
@@ -35,7 +31,7 @@ namespace EcommerceAPI.Controllers
                     product.ProductDescription,
                     product.ProductPrice,
                 })
-            });
+            }).ToList();
             return StatusCode(StatusCodes.Status200OK, customers);
         }
 
@@ -43,6 +39,7 @@ namespace EcommerceAPI.Controllers
 
         public IActionResult AddCustomer(Customer customer)
         {
+            using var _context = new EcommerceContext();
             try
             {
                 var hasedPassWord = PasswordEncrypt.EncodePasswordToBase64(customer.Password);
@@ -62,6 +59,8 @@ namespace EcommerceAPI.Controllers
 
         public IActionResult GetCustomer(int Id)
         {
+            using var _context = new EcommerceContext();
+
             try
             {
                 var customer = _context.Customers.Where(x => x.Id == Id).Select(customer => new
@@ -70,7 +69,8 @@ namespace EcommerceAPI.Controllers
                     customer.FirstName,
                     customer.LastName,
                     customer.Email,
-                });
+                    customer.Admin,
+                }).FirstOrDefault();
                 return StatusCode(StatusCodes.Status200OK, customer);
             }
             catch (Exception Ex)
@@ -85,15 +85,18 @@ namespace EcommerceAPI.Controllers
 
         public IActionResult Login([FromBody] LoginData miniCustomer)
         {
+            using var _context = new EcommerceContext();
+
             var user = _context.Customers.Where(x => x.Email == miniCustomer.Email).FirstOrDefault();
+
             if(user != null)
             {
                 var password = PasswordEncrypt.DecodeFrom64(user.Password);
                 if(password != miniCustomer.Password)
                 {
-                    return StatusCode(StatusCodes.Status401Unauthorized, new {message = "Email or password is Incorrect!!!"});
+                    return StatusCode(StatusCodes.Status400BadRequest, new {message = "Email or password is Incorrect!!!"});
                 }
-                return StatusCode(StatusCodes.Status200OK, new {message = "You are logged in!!"});
+                return StatusCode(StatusCodes.Status200OK, user);
             }
             return StatusCode(StatusCodes.Status400BadRequest, new { message = "Email or password is Incorrect!!!" });
         }

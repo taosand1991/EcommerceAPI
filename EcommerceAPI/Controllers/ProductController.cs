@@ -1,8 +1,10 @@
 ﻿using EcommerceAPI.Data;
 using EcommerceAPI.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
+using System.Collections.Generic;
+
 
 namespace EcommerceAPI.Controllers
 {
@@ -10,47 +12,77 @@ namespace EcommerceAPI.Controllers
     [ApiController]
     public class ProductController : ControllerBase
     {
-        private readonly EcommerceContext _context;
-
-        public ProductController(EcommerceContext context)
-        {
-            _context = context;
-        }
 
         [HttpGet]
 
-        public ActionResult GetProducts()
+        public IActionResult GetProducts()
         {
-            
-            var products = _context.Products.Select(product => new
+            using var _context = new EcommerceContext();
+
+            try
             {
-                id = product.Id,
-                productPrice = product.ProductPrice,
-                productName = product.ProductName,
-                productDescription = product.ProductDescription,
-
-                Categories = product.Categories.Select(category => new
+                var products = _context.Products.Select(product => new
                 {
-                    id = category.Id,
-                    name = category.Name,
-                    type = category.Type,
-                })
-            });
+                    id = product.Id,
+                    productPrice = product.ProductPrice,
+                    productName = product.ProductName,
+                    productDescription = product.ProductDescription,
+                    customerId = product.CustomerId,
 
-            return StatusCode(StatusCodes.Status200OK, products);
-           
+                    Categories = product.Categories.Select(category => new
+                    {
+                        id = category.Id,
+                        name = category.Name,
+                        type = category.Type,
+                    })
+                }).ToList();
+
+                return StatusCode(StatusCodes.Status200OK, products);
+            }
+            catch (Exception Ex)
+            {
+
+                return StatusCode(StatusCodes.Status500InternalServerError, Ex.Message);
+            }
+            
+
         }
 
         [HttpPost]
 
-        public IActionResult AddProduct(Product product)
+        public IActionResult AddProduct([FromBody]ProductCategory product)
         {
+            using var _context = new EcommerceContext();
+
+            
             try
             {
-                _context.Customers.Single(x => x.Id == product.CustomerId).Products.Add(product);
-                _context.Products.Add(product);
+
+                Product ProductData = new()
+                {
+                    ProductName = product.ProductName,
+                    ProductDescription = product.ProductDescription,
+                    ProductPrice = product.ProductPrice,
+                    CustomerId = product.CustomerId,
+                };
+                foreach (var category in product.Categories)
+                {
+                    var existingCategory = _context.Categories.FirstOrDefault(x => x.Name == category.Name);
+
+                    Console.WriteLine($"  ExistingCategory: {existingCategory}");
+
+                    if (existingCategory != null)
+                    {
+                        ProductData.Categories.Add(existingCategory);
+
+                    }
+                }
+
+
+
+                _context.Products.Add(ProductData);
                 _context.SaveChanges();
-                return StatusCode(StatusCodes.Status201Created, product);
+                return StatusCode(StatusCodes.Status201Created, new {message = "Product has been created"});
             }
             catch (Exception Ex)
             {
@@ -63,15 +95,86 @@ namespace EcommerceAPI.Controllers
 
         public IActionResult GetProduct(int Id)
         {
+            using var _context = new EcommerceContext();
             try
             {
-                var product = _context.Products.Where(x => x.Id == Id);
-                return StatusCode(StatusCodes.Status200OK, product);
+                var product = _context.Products.Where(x => x.Id == Id).Select(product => new
+                {
+                    product.Id,
+                    product.ProductName,
+                    product.ProductDescription,
+                    product.ProductPrice,
+                    product.CustomerId,
+
+                    Categories = product.Categories.Select(category => new
+                    {
+                        category.Name,
+                        category.Type,
+                    })
+                }).FirstOrDefault();
+                if(product != null)
+                    return StatusCode(StatusCodes.Status200OK, product);
+                return StatusCode(StatusCodes.Status404NotFound, new { message = "Product is not found" });
             }
             catch (Exception Ex)
             {
 
                 return StatusCode(StatusCodes.Status500InternalServerError, Ex.Message);
+            }
+        }
+
+        [HttpDelete("{Id}")]
+
+        public IActionResult DeleteProduct(string Id) 
+        {
+            Console.WriteLine($"Name: {Id}");
+            using var _context = new EcommerceContext();
+            try
+            {
+                var product = _context.Products.Where(x => x.ProductName == Id).FirstOrDefault();
+
+                if (product != null)
+                {
+                    _context.Products.Remove(product);
+                    _context.SaveChanges();
+                    return StatusCode(StatusCodes.Status204NoContent);
+                }
+                return StatusCode(StatusCodes.Status404NotFound, new {message = "Product not found"});
+
+            }
+            catch (Exception Ex)
+            {
+
+                return StatusCode(StatusCodes.Status500InternalServerError, Ex.Message);
+            }
+        }
+
+        [HttpPut("{id}")]
+
+        public IActionResult UpdateProduct([FromBody] Product product, int Id)
+        {
+            using var _context = new EcommerceContext();
+            Console.WriteLine($"Id: {Id}");
+            Console.WriteLine($"productName: {product.Categories.Count}");
+            try
+            {
+                var productData = _context.Products.Find(Id);
+
+                if(productData != null)
+                {
+                    productData.ProductName = product.ProductName;
+                    productData.ProductDescription = product.ProductDescription;
+                    productData.ProductPrice = product.ProductPrice;
+                    productData.CustomerId = product.CustomerId;
+                    _context.SaveChanges();
+                    return StatusCode(StatusCodes.Status200OK, "Product has been updated");
+                }
+                return StatusCode(StatusCodes.Status404NotFound, "Product could not be found");
+            }
+            catch (Exception Ex)
+            {
+
+                return StatusCode(StatusCodes.Status400BadRequest, Ex.InnerException?.Message);
             }
         }
     }

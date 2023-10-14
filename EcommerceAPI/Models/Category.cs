@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EcommerceAPI.Models
@@ -8,6 +9,8 @@ namespace EcommerceAPI.Models
  
     public class Category
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Key]
         public int Id { get; set; }
 
         public required string Name { get; set; }
@@ -15,6 +18,6 @@ namespace EcommerceAPI.Models
         [DefaultValue("category")]
         public required string Type { get; set; }
 
-        public List<Product> Products { get; set; } = new List<Product>();
+        public ICollection<Product> Products { get; set; } = new List<Product>();
     }
 }
