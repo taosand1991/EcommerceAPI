@@ -12,6 +12,8 @@ namespace EcommerceAPI.Controllers
     [ApiController]
     public class ProductController : ControllerBase
     {
+       
+       
 
         [HttpGet]
 
@@ -27,6 +29,7 @@ namespace EcommerceAPI.Controllers
                     productPrice = product.ProductPrice,
                     productName = product.ProductName,
                     productDescription = product.ProductDescription,
+                    productImage = product.ProductImage,
                     customerId = product.CustomerId,
 
                     Categories = product.Categories.Select(category => new
@@ -63,6 +66,7 @@ namespace EcommerceAPI.Controllers
                     ProductName = product.ProductName,
                     ProductDescription = product.ProductDescription,
                     ProductPrice = product.ProductPrice,
+                    ProductImage = product.ProductImage,
                     CustomerId = product.CustomerId,
                 };
                 foreach (var category in product.Categories)
@@ -104,6 +108,7 @@ namespace EcommerceAPI.Controllers
                     product.ProductName,
                     product.ProductDescription,
                     product.ProductPrice,
+                    product.ProductImage,
                     product.CustomerId,
 
                     Categories = product.Categories.Select(category => new
@@ -127,7 +132,6 @@ namespace EcommerceAPI.Controllers
 
         public IActionResult DeleteProduct(string Id) 
         {
-            Console.WriteLine($"Name: {Id}");
             using var _context = new EcommerceContext();
             try
             {
@@ -165,6 +169,7 @@ namespace EcommerceAPI.Controllers
                     productData.ProductName = product.ProductName;
                     productData.ProductDescription = product.ProductDescription;
                     productData.ProductPrice = product.ProductPrice;
+                    productData.ProductImage = product.ProductImage;
                     productData.CustomerId = product.CustomerId;
                     _context.SaveChanges();
                     return StatusCode(StatusCodes.Status200OK, "Product has been updated");
@@ -176,6 +181,13 @@ namespace EcommerceAPI.Controllers
 
                 return StatusCode(StatusCodes.Status400BadRequest, Ex.InnerException?.Message);
             }
+        }
+
+        [HttpGet]
+        [Route("/")]
+        public IActionResult Index() 
+        {
+            return StatusCode(StatusCodes.Status200OK, "product is Okay");
         }
     }
 }

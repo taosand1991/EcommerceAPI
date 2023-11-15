@@ -19,7 +19,12 @@ namespace EcommerceAPI.Models
         [PasswordPropertyText]
         public required string Password { get; set; }
 
+
+        public  string? PhoneNumber { get; set; }
+
         public List<Product> Products { get; } = new List<Product>();
+
+        public Address? Address { get; set; }
     }
 
     public class LoginData

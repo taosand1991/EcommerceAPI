@@ -1,6 +1,7 @@
 ﻿using EcommerceAPI.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
+using System.Reflection;
+using System.Xml.Linq;
 
 namespace EcommerceAPI.Data
 {
@@ -12,9 +13,12 @@ namespace EcommerceAPI.Data
 
         public DbSet<Category> Categories { get; set; }
 
-        //public EcommerceContext(DbContextOptions<EcommerceContext> options) : base(options) { }
+        public DbSet<CartOrderItem> CartItems { get; set; }
 
-        //public EcommerceContext() { }
+        public DbSet<Address> Addresses { get; set; }
+
+
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -39,11 +43,37 @@ namespace EcommerceAPI.Data
                 .HasMany(e => e.Products)
                 .WithMany(e => e.Categories)
                 .UsingEntity("CategoryProduct");
+
+            modelBuilder.Entity<CartOrderItem>()
+                .HasOne(e => e.Product)
+                .WithOne()
+                .OnDelete(DeleteBehavior.ClientNoAction);
+
+            modelBuilder.Entity<CartOrderItem>()
+                .HasOne(e => e.Customer)
+                .WithOne()
+                .OnDelete(DeleteBehavior.ClientNoAction);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB; Initial Catalog=EcommerceApi");
+            if(!optionsBuilder.IsConfigured)
+            {
+                var envName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+                IConfigurationRoot configuration = new ConfigurationBuilder()
+                   .SetBasePath(Directory.GetCurrentDirectory())
+                   .AddJsonFile($"appsettings.json")
+                   .AddJsonFile($"appsettings.{envName}.json", optional: true)
+                   .AddUserSecrets(Assembly.GetExecutingAssembly(), true)
+                    .AddEnvironmentVariables()
+                    .Build();
+               
+               
+                var connectionString = configuration.GetConnectionString("MyConnection");
+                
+                optionsBuilder.UseSqlServer(connectionString);
+            }
+            
         }
     }
 

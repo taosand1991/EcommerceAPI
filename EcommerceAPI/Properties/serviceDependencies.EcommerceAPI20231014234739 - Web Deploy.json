@@ -1,0 +1,16 @@
+{
+  "dependencies": {
+    "apis1": {
+      "apiEndpoint": "https://ecommerceapiservice.azure-api.net/",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.ApiManagement/service/EcommerceAPIService/apis/EcommerceAPI",
+      "type": "apis.azure"
+    },
+    "mssql1": {
+      "serviceConnectorResourceId": "/subscriptions/[parameters('subscriptionId')]/resourcegroups/[parameters('resourceGroupName')]/providers/Microsoft.Web/sites/EcommerceAPI20231014234739/providers/Microsoft.ServiceLinker/linkers/ConnectionStringsMyConnection_EAD63862F4",
+      "secretStore": "AzureAppSettings",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/ecommerceapidb/databases/EcommerceAPI_db",
+      "type": "mssql.azure",
+      "connectionId": "ConnectionStrings:MyConnection"
+    }
+  }
+}

@@ -1,6 +1,5 @@
 ﻿using EcommerceAPI.Data;
 using EcommerceAPI.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -51,6 +50,29 @@ namespace EcommerceAPI.Controllers
                 })
             }).ToList();
             return StatusCode(StatusCodes.Status200OK, categories);
+        }
+
+        [HttpDelete("{name}")]
+
+        public IActionResult DeleteCategory(string name) 
+        {
+            using var context = new EcommerceContext();
+            try
+            {
+                var category = context.Categories.FirstOrDefault(cat => cat.Name == name);
+                if(category != null) 
+                {
+                    context.Categories.Remove(category);
+                    context.SaveChanges();
+                    return StatusCode(StatusCodes.Status204NoContent, new {message = "category has been deleted"});
+                }
+                return StatusCode(StatusCodes.Status404NotFound);
+            }
+            catch (Exception Ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, Ex.Message);
+
+            }
         }
     }
 }

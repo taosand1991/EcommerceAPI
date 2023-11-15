@@ -4,6 +4,7 @@ using EcommerceAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EcommerceAPI.Migrations
 {
     [DbContext(typeof(EcommerceContext))]
-    partial class EcommerceContextModelSnapshot : ModelSnapshot
+    [Migration("20231029144817_createCartOrderItemDB")]
+    partial class createCartOrderItemDB
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,49 +38,6 @@ namespace EcommerceAPI.Migrations
                     b.HasIndex("ProductsId");
 
                     b.ToTable("CategoryProduct");
-                });
-
-            modelBuilder.Entity("EcommerceAPI.Models.Address", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("City")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Country")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("CustomerId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("PostalCode")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("State")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("StreetName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("StreetNo")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CustomerId")
-                        .IsUnique();
-
-                    b.ToTable("Addresses");
                 });
 
             modelBuilder.Entity("EcommerceAPI.Models.CartOrderItem", b =>
@@ -102,10 +62,6 @@ namespace EcommerceAPI.Migrations
                     b.HasIndex("CustomerId")
                         .IsUnique()
                         .HasFilter("[CustomerId] IS NOT NULL");
-
-                    b.HasIndex("ProductId")
-                        .IsUnique()
-                        .HasFilter("[ProductId] IS NOT NULL");
 
                     b.ToTable("CartItems");
                 });
@@ -180,6 +136,9 @@ namespace EcommerceAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("CartOrderItemId")
+                        .HasColumnType("int");
+
                     b.Property<int>("CustomerId")
                         .HasColumnType("int");
 
@@ -198,6 +157,8 @@ namespace EcommerceAPI.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CartOrderItemId");
 
                     b.HasIndex("CustomerId");
 
@@ -219,17 +180,6 @@ namespace EcommerceAPI.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("EcommerceAPI.Models.Address", b =>
-                {
-                    b.HasOne("EcommerceAPI.Models.Customer", "Customer")
-                        .WithOne("Address")
-                        .HasForeignKey("EcommerceAPI.Models.Address", "CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Customer");
-                });
-
             modelBuilder.Entity("EcommerceAPI.Models.CartOrderItem", b =>
                 {
                     b.HasOne("EcommerceAPI.Models.Customer", "Customer")
@@ -237,18 +187,16 @@ namespace EcommerceAPI.Migrations
                         .HasForeignKey("EcommerceAPI.Models.CartOrderItem", "CustomerId")
                         .OnDelete(DeleteBehavior.ClientNoAction);
 
-                    b.HasOne("EcommerceAPI.Models.Product", "Product")
-                        .WithOne()
-                        .HasForeignKey("EcommerceAPI.Models.CartOrderItem", "ProductId")
-                        .OnDelete(DeleteBehavior.ClientNoAction);
-
                     b.Navigation("Customer");
-
-                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("EcommerceAPI.Models.Product", b =>
                 {
+                    b.HasOne("EcommerceAPI.Models.CartOrderItem", null)
+                        .WithMany("Products")
+                        .HasForeignKey("CartOrderItemId")
+                        .OnDelete(DeleteBehavior.ClientNoAction);
+
                     b.HasOne("EcommerceAPI.Models.Customer", null)
                         .WithMany("Products")
                         .HasForeignKey("CustomerId")
@@ -256,10 +204,13 @@ namespace EcommerceAPI.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("EcommerceAPI.Models.CartOrderItem", b =>
+                {
+                    b.Navigation("Products");
+                });
+
             modelBuilder.Entity("EcommerceAPI.Models.Customer", b =>
                 {
-                    b.Navigation("Address");
-
                     b.Navigation("Products");
                 });
 #pragma warning restore 612, 618
