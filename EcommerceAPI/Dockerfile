@@ -6,7 +6,7 @@ EXPOSE 8080
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
-COPY ["./EcommerceAPI.csproj", "EcommerceAPI/"]
+COPY ["EcommerceAPI/EcommerceAPI.csproj", "EcommerceAPI/"]
 RUN dotnet restore "EcommerceAPI/EcommerceAPI.csproj"
 COPY . .
 WORKDIR "/src/EcommerceAPI"
