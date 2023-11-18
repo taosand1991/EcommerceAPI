@@ -19,6 +19,8 @@ builder.Services.AddCors(x => x.AddPolicy("Mypolicy", builder =>
 }
 ));
 
+builder.Services.AddDbContext<EcommerceContext>();
+
 var app = builder.Build();
 
 var envName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
