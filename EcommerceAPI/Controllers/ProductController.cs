@@ -187,7 +187,8 @@ namespace EcommerceAPI.Controllers
         [Route("/")]
         public IActionResult Index() 
         {
-            return StatusCode(StatusCodes.Status200OK, "product is Okay");
+            var envName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            return StatusCode(StatusCodes.Status200OK, $"product is Okay - {envName}");
         }
     }
 }
