@@ -76,7 +76,7 @@ namespace EcommerceAPI.Data
                     var password = Environment.GetEnvironmentVariable("Password");
                     var database = Environment.GetEnvironmentVariable("Database");
                     var port = Environment.GetEnvironmentVariable("Port");
-                    var connection = @$"Server={server}User Id={userId};Password={password};Database={database};Port={port};";
+                    var connection = @$"Host={server}User ID={userId};Password={password};Database={database};Port={port};";
                     optionsBuilder.UseNpgsql(connection);
                 }else
                 {
