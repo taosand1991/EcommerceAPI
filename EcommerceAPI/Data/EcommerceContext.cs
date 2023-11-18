@@ -81,9 +81,9 @@ namespace EcommerceAPI.Data
                     optionsBuilder.UseNpgsql(connection);
                 }else
                 {
-                    var connectionString = configuration.GetConnectionString("MyConnection");
+                    var connectionString = configuration.GetConnectionString("Postgres");
                 
-                    optionsBuilder.UseSqlServer(connectionString);
+                    optionsBuilder.UseNpgsql(connectionString);
                 }
             }
             
