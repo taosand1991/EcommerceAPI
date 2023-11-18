@@ -71,8 +71,13 @@ namespace EcommerceAPI.Data
                
                 if(envName == "Production") 
                 {
-                    var connectionString = Environment.GetEnvironmentVariable("RemoteConnection");
-                    optionsBuilder.UseNpgsql(connectionString);
+                    var server = Environment.GetEnvironmentVariable("Server");
+                    var userId = Environment.GetEnvironmentVariable("User_Id");
+                    var password = Environment.GetEnvironmentVariable("Password");
+                    var database = Environment.GetEnvironmentVariable("Database");
+                    var port = Environment.GetEnvironmentVariable("Port");
+                    var connection = @$"Server={server}User Id={userId};Password={password};Database={database};Port={port};";
+                    optionsBuilder.UseNpgsql(connection);
                 }else
                 {
                     var connectionString = configuration.GetConnectionString("MyConnection");
