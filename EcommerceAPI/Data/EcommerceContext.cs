@@ -69,9 +69,16 @@ namespace EcommerceAPI.Data
                     .Build();
                
                
-                var connectionString = configuration.GetConnectionString("MyConnection");
+                if(envName == "Production") 
+                {
+                    var connectionString = Environment.GetEnvironmentVariable("RemoteConnection");
+                    optionsBuilder.UseSqlServer(connectionString);
+                }else
+                {
+                    var connectionString = configuration.GetConnectionString("MyConnection");
                 
-                optionsBuilder.UseSqlServer(connectionString);
+                    optionsBuilder.UseSqlServer(connectionString);
+                }
             }
             
         }
