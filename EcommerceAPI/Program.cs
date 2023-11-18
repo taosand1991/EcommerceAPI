@@ -1,3 +1,6 @@
+using EcommerceAPI.Data;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -17,6 +20,17 @@ builder.Services.AddCors(x => x.AddPolicy("Mypolicy", builder =>
 ));
 
 var app = builder.Build();
+
+var envName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
+if(envName == "Production")
+{
+    using var scope = app.Services.CreateScope();
+
+    var db = scope.ServiceProvider.GetRequiredService<EcommerceContext>();
+    db.Database.Migrate();
+    app.Run();
+}
 
 
 
