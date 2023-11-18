@@ -72,7 +72,7 @@ namespace EcommerceAPI.Data
                 if(envName == "Production") 
                 {
                     var connectionString = Environment.GetEnvironmentVariable("RemoteConnection");
-                    optionsBuilder.UseSqlServer(connectionString);
+                    optionsBuilder.UseNpgsql(connectionString);
                 }else
                 {
                     var connectionString = configuration.GetConnectionString("MyConnection");
