@@ -19,7 +19,27 @@ builder.Services.AddCors(x => x.AddPolicy("Mypolicy", builder =>
 }
 ));
 
-builder.Services.AddDbContext<EcommerceContext>();
+builder.Services.AddDbContext<EcommerceContext>(options => 
+{
+
+var envName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+     if(envName == "Production") 
+                {
+                    var server = Environment.GetEnvironmentVariable("Server");
+                    var userId = Environment.GetEnvironmentVariable("User_Id");
+                    var password = Environment.GetEnvironmentVariable("Password");
+                    var database = Environment.GetEnvironmentVariable("Database");
+                    var port = Environment.GetEnvironmentVariable("Port");
+                    var connection = $"Host={server};User ID={userId};Password={password};Database={database};Port={port};";
+
+                    options.UseNpgsql(connection);
+                }else
+                {
+                    options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres"));
+                }
+});
+
+
 
 var app = builder.Build();
 
