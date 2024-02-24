@@ -1,11 +1,10 @@
 ﻿using EcommerceAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
-using System.Xml.Linq;
 
 namespace EcommerceAPI.Data
 {
-    public class EcommerceContext: DbContext
+    public class EcommerceContext : DbContext
     {
         public DbSet<Customer> Customers { get; set; }
 
@@ -57,7 +56,7 @@ namespace EcommerceAPI.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if(!optionsBuilder.IsConfigured)
+            if (!optionsBuilder.IsConfigured)
             {
                 var envName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
                 IConfigurationRoot configuration = new ConfigurationBuilder()
@@ -67,9 +66,9 @@ namespace EcommerceAPI.Data
                    .AddUserSecrets(Assembly.GetExecutingAssembly(), true)
                     .AddEnvironmentVariables()
                     .Build();
-               
-               
-                if(envName == "Production") 
+
+
+                if (envName == "Production")
                 {
                     var server = Environment.GetEnvironmentVariable("Server");
                     var userId = Environment.GetEnvironmentVariable("User_Id");
@@ -78,17 +77,18 @@ namespace EcommerceAPI.Data
                     var port = Environment.GetEnvironmentVariable("Port");
                     var connection = $"Host={server};User ID={userId};Password={password};Database={database};Port={port};";
 
-                    optionsBuilder.UseNpgsql(connection);
-                }else
+                    optionsBuilder.UseNpgsql(connection, options => options.SetPostgresVersion(9, 6));
+                }
+                else
                 {
                     var connectionString = configuration.GetConnectionString("Postgres");
-                
+
                     optionsBuilder.UseNpgsql(connectionString);
                 }
             }
-            
+
         }
     }
 
-    
+
 }
