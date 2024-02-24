@@ -1,4 +1,8 @@
 using EcommerceAPI.Data;
+using EcommerceAPI.Interfaces.Respository;
+using EcommerceAPI.Interfaces.Service;
+using EcommerceAPI.Repository;
+using EcommerceAPI.Service;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,14 +24,19 @@ builder.Services.AddCors(x => x.AddPolicy("Mypolicy", builder =>
 ));
 
 builder.Services.AddDbContext<EcommerceContext>();
-
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<ICustomerService, CustomerService>();
+builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 
 
 var app = builder.Build();
 
 var envName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
-if(envName == "Production")
+if (envName == "Production")
 {
     using var scope = app.Services.CreateScope();
 
