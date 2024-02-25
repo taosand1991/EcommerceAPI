@@ -34,7 +34,7 @@ jobs:
         if: success() || failure()        # run this step even if previous step failed
         with:
           name: test-results
-          path: jest-junit.xml
+          path: /home/runner/work/EcommerceAPI/EcommerceAPI/Unit Test/TestResults/test_results.xml
 
       - name: Test Report
         uses: dorny/test-reporter@v1
