@@ -21,8 +21,15 @@ namespace EcommerceAPI.Controllers
 
         public IActionResult GetCustomers()
         {
-            var customers = _customerService.GetCustomers();
-            return StatusCode(StatusCodes.Status200OK, customers);
+            try
+            {
+                var customers = _customerService.GetCustomers();
+                return StatusCode(StatusCodes.Status200OK, customers);
+            }
+            catch (Exception Ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, Ex.Message);
+            }
         }
 
         [HttpPost]

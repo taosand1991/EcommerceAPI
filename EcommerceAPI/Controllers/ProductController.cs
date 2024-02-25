@@ -95,6 +95,10 @@ namespace EcommerceAPI.Controllers
             {
                 return StatusCode(StatusCodes.Status404NotFound, Ex.Message);
             }
+            catch (Exception Ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, Ex.Message);
+            }
         }
 
         [HttpGet]

@@ -33,8 +33,15 @@ namespace EcommerceAPI.Controllers
         [HttpGet]
         public IActionResult GetCategories()
         {
-            var categories = _categoryService.GetAllCategories();
-            return StatusCode(StatusCodes.Status200OK, categories);
+            try
+            {
+                var categories = _categoryService.GetAllCategories();
+                return StatusCode(StatusCodes.Status200OK, categories);
+            }
+            catch (Exception Ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, Ex.Message);
+            }
         }
 
         [HttpDelete("{name}")]
