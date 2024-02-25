@@ -40,7 +40,6 @@ jobs:
         uses: dorny/test-reporter@v1
         if: success() || failure()    # run this step even if previous step failed
         with:
-          artifact: test-results
           name: MS Tests            # Name of the check run which will be created
           path: /home/runner/work/EcommerceAPI/EcommerceAPI/Unit Test/TestResults/test_results.xml   # Path to test results
           reporter: dotnet-trx
