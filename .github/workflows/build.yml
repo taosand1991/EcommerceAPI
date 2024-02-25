@@ -28,7 +28,7 @@ jobs:
         run: dotnet build --configuration Release
 
       - name: Test
-        run: dotnet test --configuration Release --logger "trx;LogFileName=test_results.xml"
+        run: dotnet test --configuration Release --logger "trx;LogFileName=test_results.trx"
         continue-on-error: false
       # - uses: actions/upload-artifact@v3  # upload test results
       #   if: success() || failure()        # run this step even if previous step failed
@@ -41,6 +41,6 @@ jobs:
         if: success() || failure()    # run this step even if previous step failed
         with:
           name: MS Tests            # Name of the check run which will be created
-          path: /home/runner/work/EcommerceAPI/EcommerceAPI/Unit Test/TestResults/test_results.xml   # Path to test results
+          path: /home/runner/work/EcommerceAPI/EcommerceAPI/Unit Test/TestResults/test_results.trx   # Path to test results
           reporter: dotnet-trx
         
