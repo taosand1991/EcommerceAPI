@@ -30,4 +30,12 @@ jobs:
       - name: Test
         run: dotnet test --configuration Release --logger "trx;LogFileName=test_results.xml"
         continue-on-error: false
+
+      - name: Test Report
+        uses: dorny/test-reporter@v1
+        if: success() || failure()    # run this step even if previous step failed
+        with:
+          name: MS Tests            # Name of the check run which will be created
+          path: test_results.xml   # Path to test results
+          reporter: dotnet-trx
         
