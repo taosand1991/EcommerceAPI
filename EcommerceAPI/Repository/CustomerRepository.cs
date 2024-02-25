@@ -66,7 +66,7 @@ namespace EcommerceAPI.Repository
         {
             using var _context = new EcommerceContext();
 
-            return _context.Customers.Where(x => x.Email == Email).FirstOrDefault() ?? throw new CustomErrorException("Customer is not found!");
+            return _context.Customers.Where(x => x.Email == Email).FirstOrDefault();
         }
 
         public void SaveNewPassword(string email, string password)

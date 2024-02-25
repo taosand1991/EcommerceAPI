@@ -83,7 +83,7 @@ namespace EcommerceAPI.Data
                 {
                     var connectionString = configuration.GetConnectionString("Postgres");
 
-                    optionsBuilder.UseNpgsql(connectionString);
+                    optionsBuilder.UseNpgsql(connectionString, options => options.SetPostgresVersion(new Version(16, 1)));
                 }
             }
 
